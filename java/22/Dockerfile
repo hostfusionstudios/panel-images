@@ -1,4 +1,4 @@
-FROM        ghcr.io/graalvm/jdk-community:21-ol8
+FROM        ghcr.io/graalvm/jdk-community:22-ol8
 
 LABEL       author="BijjuXD" maintainer="author@bijjuxd.me"
 LABEL       org.opencontainers.image.source="https://github.com/hostfusionstudios/panel-images"

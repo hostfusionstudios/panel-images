@@ -1,36 +1,21 @@
-FROM        --platform=$TARGETOS/$TARGETARCH eclipse-temurin:8u312-b07-jdk-focal
+FROM        ghcr.io/graalvm/graalvm-ce:java8
 
-LABEL       author="Michael Parker" maintainer="parker@pterodactyl.io"
+LABEL       author="BijjuXD" maintainer="author@bijjuxd.me"
+LABEL       org.opencontainers.image.source="https://github.com/hostfusionstudios/panel-images"
+LABEL       org.opencontainers.image.licenses="MIT"
 
-LABEL       org.opencontainers.image.source="https://github.com/pterodactyl/yolks"
-LABEL       org.opencontainers.image.licenses=MIT
+RUN         microdnf update \
+            && microdnf install -y curl ca-certificates openssl git tar sqlite fontconfig tzdata iproute gcc gcc-c++ freetype libstdc++ lsof glibc-locale-source glibc-langpack-en \
+            && microdnf clean all \
+            && adduser --home-dir /home/container container
 
-RUN         apt update -y \
-            && apt install -y \
-                curl \
-                lsof \
-                ca-certificates \
-                openssl \
-                git \
-                tar \
-                sqlite3 \
-                fontconfig \
-                tzdata \
-                iproute2 \
-                libfreetype6 \
-                tini \
-				zip \
-				unzip
+ENV         LC_ALL=en_US.UTF-8
+ENV         LANG=en_US.UTF-8
+ENV         LANGUAGE=en_US.UTF-8
 
-## Setup user and working directory
-RUN         useradd -m -d /home/container -s /bin/bash container
 USER        container
 ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
 
-STOPSIGNAL SIGINT
-
-COPY        --chown=container:container ./../entrypoint.sh /entrypoint.sh
-RUN         chmod +x /entrypoint.sh
-ENTRYPOINT    ["/usr/bin/tini", "-g", "--"]
-CMD         ["/entrypoint.sh"]
+COPY        ./entrypoint.sh /entrypoint.sh
+CMD         [ "/bin/bash", "/entrypoint.sh" ]
